@@ -15,6 +15,7 @@ def run_game(mode):
     pygame.display.set_caption("GD Pixel Fighter")
     clock = pygame.time.Clock()
     FPS = 60
+    jumpHeight = 10
 
     # ---------- COLORS ----------
     BG = (10, 10, 15)
@@ -41,12 +42,15 @@ def run_game(mode):
             self.attacking = False
             self.vel_y = 0
             self.on_ground = True
+            self.direction = "R"
 
         def move(self, keys):
             if self.controls:
                 if keys[self.controls["left"]]:
+                    self.direction = "L"
                     self.rect.x -= self.speed
                 if keys[self.controls["right"]]:
+                    self.direction = "R"
                     self.rect.x += self.speed
                 if keys[self.controls["jump"]] and self.on_ground:
                     self.vel_y = -15
@@ -73,9 +77,16 @@ def run_game(mode):
 
         def draw(self):
             pygame.draw.rect(screen, self.color, self.rect)
+            # What to draw if we are attacking
             if self.attacking:
-                atk = pygame.Rect(self.rect.right, self.rect.y + 10, 20, 20)
-                pygame.draw.rect(screen, WHITE, atk)
+                if self.direction == "L":
+                    atk = pygame.Rect(self.rect.left - 20, self.rect.y + 10, 20, 20)
+                    # TODO: different colors for more powerful swords
+                    pygame.draw.rect(screen, WHITE, atk)
+                else:
+                    atk = pygame.Rect(self.rect.right, self.rect.y + 10, 20, 20)
+                    pygame.draw.rect(screen, WHITE, atk)
+                # TODO: Can we delete the return value?
                 return atk
             return None
 
